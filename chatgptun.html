@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .output {
+            margin-top: 20px;
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ChatGPT </h1>
+        <textarea id="userInput" rows="4" placeholder="Enter your text here..." required></textarea>
+        <button onclick="getResponse()">Submit</button>
+        <div class="output" id="output"></div>
+    </div>
+
+    <script>
+        async function getResponse() {
+            const apiKey = 'sk-OsMMq65tXdfOIlTUYtocSL7NCsmA7CerN77OkEv29dODg1EA'; // Provide your API key here
+            const userInput = document.getElementById('userInput').value;
+            const outputDiv = document.getElementById('output');
+
+            if (!userInput) {
+                outputDiv.textContent = 'Please enter text input.';
+                return;
+            }
+
+            const url = 'https://api.openai.com/v1/chat/completions';
+            const data = {
+                model: "gpt-3.5-turbo",
+                messages: [
+                    { "role": "system", "content": "You are a helpful assistant." },
+                    { "role": "user", "content": userInput }
+                ]
+            };
+
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify(data)
+            };
+
+            try {
+                const response = await fetch(url, options);
+                const json = await response.json();
+                if (response.ok) {
+                    outputDiv.textContent = json.choices[0].message.content;
+                } else {
+                    outputDiv.textContent = `Error: ${json.error.message}`;
+                }
+            } catch (error) {
+                outputDiv.textContent = `Request failed: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
